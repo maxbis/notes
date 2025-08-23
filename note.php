@@ -272,7 +272,7 @@ function updateSaveButtonState() {
     if (hasUnsavedChanges) {
         // Enable button and show blue color
         saveButton.disabled = false;
-        saveButton.className = 'bg-note-blue hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
+        saveButton.className = 'bg-note-red hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
         saveButton.textContent = 'Save Note';
     } else {
         // Disable button and show grey color
@@ -403,10 +403,39 @@ function performManualSave() {
     performAjaxSave(false);
 }
 
-// Manual save button enhancement
-saveButton.addEventListener('click', function(e) {
-    // Manual save is now handled by onclick="performManualSave()"
+// Save on page unload if there are unsaved changes
+window.addEventListener('beforeunload', function(e) {
+
+    if (hasUnsavedChanges) {
+        // Perform a synchronous save attempt
+        const currentContent = contentTextarea.value;
+        const currentTitle = titleInput.value;
+        
+        // Create a synchronous XMLHttpRequest to save before leaving
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', window.location.href, false); // Synchronous request
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        const formData = new URLSearchParams();
+        formData.append('csrf_token', '<?php echo generateCSRFToken(); ?>');
+        formData.append('title', currentTitle);
+        formData.append('content', currentContent);
+        formData.append('auto_save', '1');
+        
+        try {
+            xhr.send(formData.toString());
+            // Note: We can't guarantee the save completed due to page navigation
+        } catch (error) {
+            // If save fails, we can't prevent navigation anyway
+        }
+        
+        // Show confirmation dialog to user
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+    }
 });
+
 </script>
 
 <?php include 'includes/footer.php'; ?>

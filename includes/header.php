@@ -20,6 +20,7 @@
             theme: {
                 extend: {
                     colors: {
+                        'note-red': '#EF4444',
                         'note-blue': '#3B82F6',
                         'note-gray': '#6B7280',
                     }
