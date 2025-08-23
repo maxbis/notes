@@ -125,16 +125,26 @@ include 'includes/header.php';
 ?>
 
     <!-- Note Header -->
-    <div class="mb-4 ml-4">
+    <div class="mb-4 ml-4 flex items-center justify-between">
         <input 
             type="text" 
             id="title" 
             name="title" 
             value="<?php echo e($note['title']); ?>"
-            class="w-full text-2xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 focus:border-none px-0 py-0 resize-none"
+            class="text-2xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 focus:border-none px-0 py-0 resize-none truncate"
             placeholder="Enter note title..."
             style="resize: none;"
         >
+        
+        <button 
+            type="button" 
+            id="save-button"
+            class="bg-gray-400 text-gray-600 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-not-allowed text-sm min-w-[100px]"
+            disabled
+            onclick="performManualSave()"
+        >
+            Save Note
+        </button>
     </div>
 
     <!-- Note Form -->
@@ -182,23 +192,7 @@ include 'includes/header.php';
                         <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
                     </div>
 
-                    <div class="flex space-x-3">
-                        <a 
-                            href="index.php" 
-                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                        >
-                            Cancel
-                        </a>
-                        <button 
-                            type="button" 
-                            id="save-button"
-                            class="bg-gray-400 text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors cursor-not-allowed"
-                            disabled
-                            onclick="performManualSave()"
-                        >
-                            Save Note
-                        </button>
-                    </div>
+
                 </div>
 
                 <!-- Mobile Layout -->
@@ -221,24 +215,7 @@ include 'includes/header.php';
                         <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
                     </div>
 
-                    <!-- Buttons -->
-                    <div class="flex justify-center space-x-3">
-                        <a 
-                            href="index.php" 
-                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                        >
-                            Cancel
-                        </a>
-                        <button 
-                            type="button" 
-                            id="save-button"
-                            class="bg-gray-400 text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors cursor-not-allowed"
-                            disabled
-                            onclick="performManualSave()"
-                        >
-                            Save Note
-                        </button>
-                    </div>
+
                 </div>
             </div>
 
@@ -294,12 +271,12 @@ function updateSaveButtonState() {
     if (hasUnsavedChanges) {
         // Enable button and show blue color
         saveButton.disabled = false;
-        saveButton.className = 'bg-note-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors';
+        saveButton.className = 'bg-note-blue hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
         saveButton.textContent = 'Save Note';
     } else {
         // Disable button and show grey color
         saveButton.disabled = true;
-        saveButton.className = 'bg-gray-400 text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors cursor-not-allowed';
+        saveButton.className = 'bg-gray-400 text-gray-600 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-not-allowed text-sm min-w-[100px]';
         saveButton.textContent = 'Saved';
     }
 }
@@ -369,7 +346,7 @@ function performAjaxSave(isAutoSave = false) {
             } else {
                 saveButton.textContent = 'Saved!';
             }
-            saveButton.className = 'bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors';
+            saveButton.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will set button to "Saved" state
@@ -380,7 +357,7 @@ function performAjaxSave(isAutoSave = false) {
         } else {
             // Show error indicator
             saveButton.textContent = 'Save failed';
-            saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors';
+            saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will re-enable button if there are still changes
@@ -391,7 +368,7 @@ function performAjaxSave(isAutoSave = false) {
         console.error('Save error:', error);
         // Show error indicator
         saveButton.textContent = 'Save failed';
-        saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors';
+        saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
         
         setTimeout(() => {
             updateSaveButtonState(); // This will re-enable button if there are still changes

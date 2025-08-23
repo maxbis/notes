@@ -57,7 +57,7 @@
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="create.php" class="bg-note-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                    <a href="create.php" class="bg-note-blue hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]">
                         New Note
                     </a>
                 </div>
