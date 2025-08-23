@@ -135,6 +135,7 @@ include 'includes/header.php';
             placeholder="Enter note title..."
             style="resize: none;"
         >
+        &nbsp;
         
         <button 
             type="button" 
