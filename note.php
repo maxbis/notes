@@ -129,10 +129,10 @@ include 'includes/header.php';
 ?>
 
 <!-- Note Container with Gradient Background -->
-<div class="note-container min-h-screen sm:px-6 lg:px-8">
+<div class="note-container min-h-screen sm:px-0 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Note Card Container -->
-        <div class="note-card-inner rounded-2xl shadow-xl p-8 space-y-4">
+        <div class="note-card-inner rounded-2xl shadow-xl p-2 md:p-6 space-y-4">
             
             <!-- Note Header -->
             <div class="flex items-center justify-between">
@@ -142,7 +142,7 @@ include 'includes/header.php';
                         id="title" 
                         name="title" 
                         value="<?php echo e($note['title']); ?>"
-                        class="title-input text-3xl font-bold text-gray-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-note-blue/20 focus:border-none px-0 py-0 resize-none w-full"
+                        class="title-input text-3xl font-bold text-blue-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-note-blue/20 focus:border-none px-0 py-0 resize-none w-full ml-6"
                         placeholder="Enter note title..."
                         style="resize: none;"
                     >
@@ -168,7 +168,7 @@ include 'includes/header.php';
                             id="content" 
                             name="content" 
                             rows="24"
-                            class="content-textarea w-full px-6 py-4 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-note-blue/20 focus:border-note-blue/30 font-mono text-sm bg-white/50 backdrop-blur-sm"
+                            class="content-textarea w-full px-6 py-4 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-note-blue/20 focus:border-note-blue/30 font-mono bg-white/50 backdrop-blur-sm"
                             placeholder="Write your note here... Use #tags to organize your notes."
                             oninput="updateCharCounter()"
                         ><?php echo e($note['content']); ?></textarea>

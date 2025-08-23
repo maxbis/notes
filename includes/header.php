@@ -141,7 +141,7 @@
     </nav>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto px-0 sm:px-0 lg:px-8">
         <?php if (isset($errorMessage) && !empty(trim($errorMessage))): ?>
             <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div class="flex">

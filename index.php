@@ -31,7 +31,7 @@ include 'includes/header.php';
 ?>
 
 <!-- Search and Sort Controls -->
-<div class="mb-8">
+<div class="mb-8 mt-4">
     <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <!-- Search Form -->
         <form method="GET" action="index.php" class="flex-1 max-w-md">
