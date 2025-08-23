@@ -145,7 +145,7 @@ include 'includes/header.php';
                 <textarea 
                     id="content" 
                     name="content" 
-                    rows="20"
+                    rows="24"
                     class="content-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-note-blue focus:border-transparent font-mono text-sm"
                     placeholder="Write your note here... Use #tags to organize your notes."
                     oninput="updateCharCounter()"
