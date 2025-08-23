@@ -31,7 +31,7 @@ include 'includes/header.php';
 ?>
 
 <!-- Search and Sort Controls -->
-<div class="mb-8 mt-4">
+<div class="mb-8 mt-4 px-4">
     <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <!-- Search Form -->
         <form method="GET" action="index.php" class="flex-1 max-w-md">
@@ -67,7 +67,7 @@ include 'includes/header.php';
 </div>
 
 <!-- Notes List -->
-<div id="notes-container">
+<div id="notes-container" class="px-4">
     <?php if (empty($notes)): ?>
         <!-- Empty State -->
         <div class="text-center py-12">
@@ -94,7 +94,7 @@ include 'includes/header.php';
         </div>
     <?php else: ?>
         <!-- Notes Grid -->
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="notes-grid">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="notes-grid">
             <?php foreach ($notes as $note): ?>
                 <div class="note-card bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <div class="flex justify-between items-start mb-3">
