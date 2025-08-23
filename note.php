@@ -151,7 +151,7 @@ include 'includes/header.php';
                 <button 
                     type="button" 
                     id="save-button"
-                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2"
+                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2"
                     disabled
                     onclick="performManualSave()"
                 >
@@ -290,12 +290,12 @@ function updateSaveButtonState() {
     if (hasUnsavedChanges) {
         // Enable button and show active gradient color
         saveButton.disabled = false;
-        saveButton.className = 'save-button bg-gradient-to-r from-note-red to-note-orange hover:from-red-600 hover:to-orange-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
+        saveButton.className = 'save-button bg-gradient-to-r from-note-red to-note-orange hover:from-red-600 hover:to-orange-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
         saveButton.textContent = 'Save Note';
     } else {
         // Disable button and show grey color
         saveButton.disabled = true;
-        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2';
+        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2';
         saveButton.textContent = 'Saved';
     }
 }
@@ -338,7 +338,7 @@ function performAjaxSave(isAutoSave = false) {
         saveButton.textContent = 'Saving...';
     }
     saveButton.disabled = true;
-    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2';
+    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2';
     
     // Prepare form data
     const formData = new FormData();
@@ -366,7 +366,7 @@ function performAjaxSave(isAutoSave = false) {
             } else {
                 saveButton.textContent = 'Saved!';
             }
-            saveButton.className = 'save-button bg-gradient-to-r from-note-green to-note-blue hover:from-green-600 hover:to-blue-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
+            saveButton.className = 'save-button bg-gradient-to-r from-note-green to-note-blue hover:from-green-600 hover:to-blue-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will set button to "Saved" state
@@ -377,7 +377,7 @@ function performAjaxSave(isAutoSave = false) {
         } else {
             // Show error indicator
             saveButton.textContent = 'Save failed';
-            saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
+            saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will re-enable button if there are still changes
@@ -388,7 +388,7 @@ function performAjaxSave(isAutoSave = false) {
         console.error('Save error:', error);
         // Show error indicator
         saveButton.textContent = 'Save failed';
-        saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
+        saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
         
         setTimeout(() => {
             updateSaveButtonState(); // This will re-enable button if there are still changes
