@@ -164,7 +164,8 @@ include 'includes/header.php';
             
             <!-- Note Info -->
             <div class="mt-2 pt-2">
-                <div class="flex items-center justify-between text-sm text-gray-500">
+                <!-- Desktop Layout -->
+                <div class="hidden md:flex items-center justify-between text-sm text-gray-500">
                     <div class="flex items-center border-gray-200">
                         <span>Note ID: 
                             <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
@@ -198,7 +199,46 @@ include 'includes/header.php';
                             Save Note
                         </button>
                     </div>
+                </div>
 
+                <!-- Mobile Layout -->
+                <div class="md:hidden space-y-3">
+                    <!-- Note ID -->
+                    <div class="flex items-center justify-center text-sm text-gray-500">
+                        <span>Note ID: 
+                            <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
+                            class="font-mono text-note-blue hover:text-blue-700 hover:underline transition-colors"
+                            title="Click to copy URL">
+                                <?php echo e($note['hash_id']); ?>
+                            </a>
+                        </span>
+                    </div>
+                    
+                    <!-- Timestamps -->
+                    <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
+                        <span>Created: <?php echo formatTimestamp($note['created_at']); ?></span>
+                        <span>•</span>
+                        <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-center space-x-3">
+                        <a 
+                            href="index.php" 
+                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                        >
+                            Cancel
+                        </a>
+                        <button 
+                            type="button" 
+                            id="save-button"
+                            class="bg-gray-400 text-gray-600 px-6 py-3 rounded-lg font-medium transition-colors cursor-not-allowed"
+                            disabled
+                            onclick="performManualSave()"
+                        >
+                            Save Note
+                        </button>
+                    </div>
                 </div>
             </div>
 
