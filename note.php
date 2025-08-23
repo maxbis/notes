@@ -152,7 +152,7 @@ include 'includes/header.php';
     <div class="space-y-6">
         <!-- Content Input -->
         <div>
-            <div class="">
+            <div class="relative">
                 <textarea 
                     id="content" 
                     name="content" 
