@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title><?php echo isset($pageTitle) ? e($pageTitle) . ' - Notes App' : 'Notes App'; ?></title>
     
     <!-- Favicons -->
@@ -50,8 +50,35 @@
         .char-counter.at-limit {
             color: #EF4444;
         }
+        
+        /* Mobile-specific fixes */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+                width: 100%;
+                max-width: 100vw;
+            }
+            
+            .container, main {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+            
+            .content-textarea {
+                max-width: 100%;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+            
+            input[type="text"] {
+                max-width: 100%;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen">
     <!-- Navigation Header -->
     <nav class="bg-white shadow-sm border-b border-gray-200">

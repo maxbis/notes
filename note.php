@@ -125,13 +125,13 @@ include 'includes/header.php';
 ?>
 
     <!-- Note Header -->
-    <div class="mb-4 ml-4 flex items-center justify-between">
+    <div class="mb-4 ml-2 flex items-center justify-between">
         <input 
             type="text" 
             id="title" 
             name="title" 
             value="<?php echo e($note['title']); ?>"
-            class="text-2xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 focus:border-none px-0 py-0 resize-none truncate"
+            class="text-2xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-1 focus:border-none px-0 py-0 resize-none truncate"
             placeholder="Enter note title..."
             style="resize: none;"
         >
@@ -151,12 +151,12 @@ include 'includes/header.php';
     <div class="space-y-6">
         <!-- Content Input -->
         <div>
-            <div class="relative">
+            <div class="">
                 <textarea 
                     id="content" 
                     name="content" 
                     rows="24"
-                    class="content-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-note-blue focus:border-transparent font-mono text-sm"
+                    class="content-textarea w-full px-2 py-1 border border-gray-300  focus:ring-0 focus:ring-note-blue focus:border-transparent font-mono text-sm"
                     placeholder="Write your note here... Use #tags to organize your notes."
                     oninput="updateCharCounter()"
                 ><?php echo e($note['content']); ?></textarea>
