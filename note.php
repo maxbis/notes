@@ -131,11 +131,11 @@ include 'includes/header.php';
             id="title" 
             name="title" 
             value="<?php echo e($note['title']); ?>"
-            class="text-2xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-1 focus:border-none px-0 py-0 resize-none truncate"
+            class="text-2xl mr-1 font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-1 focus:border-none px-0 py-0 resize-none truncate"
             placeholder="Enter note title..."
             style="resize: none;"
         >
-        &nbsp;
+
         
         <button 
             type="button" 
