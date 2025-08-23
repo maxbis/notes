@@ -97,17 +97,21 @@ try {
         $pageTitle = 'Note Not Found';
         include 'includes/header.php';
         ?>
-        <div class="text-center py-12">
-            <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
+        <div class="note-container min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-2xl mx-auto">
+                <div class="note-card-inner rounded-2xl shadow-xl p-12 text-center">
+                    <div class="mx-auto h-24 w-24 text-note-gray mb-6">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Note Not Found</h3>
+                    <p class="text-gray-600 mb-8 text-lg">The note you're looking for doesn't exist or has been deleted.</p>
+                    <a href="index.php" class="bg-gradient-to-r from-note-blue to-note-purple hover:from-blue-600 hover:to-purple-600 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg inline-block">
+                        ← Back to Notes
+                    </a>
+                </div>
             </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Note Not Found</h3>
-            <p class="text-gray-500 mb-6">The note you're looking for doesn't exist or has been deleted.</p>
-            <a href="index.php" class="bg-note-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                Back to Notes
-            </a>
         </div>
         <?php
         include 'includes/footer.php';
@@ -124,105 +128,119 @@ try {
 include 'includes/header.php';
 ?>
 
-    <!-- Note Header -->
-    <div class="mb-4 ml-2 flex items-center justify-between">
-        <input 
-            type="text" 
-            id="title" 
-            name="title" 
-            value="<?php echo e($note['title']); ?>"
-            class="text-2xl mr-1 font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-1 focus:border-none px-0 py-0 resize-none truncate"
-            placeholder="Enter note title..."
-            style="resize: none;"
-        >
-
-        
-        <button 
-            type="button" 
-            id="save-button"
-            class="bg-gray-400 text-gray-600 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-not-allowed text-sm min-w-[100px]"
-            disabled
-            onclick="performManualSave()"
-        >
-            Save Note
-        </button>
-    </div>
-
-    <!-- Note Form -->
-    <div class="space-y-6">
-        <!-- Content Input -->
-        <div>
-            <div class="relative">
-                <textarea 
-                    id="content" 
-                    name="content" 
-                    rows="24"
-                    class="content-textarea w-full px-2 py-1 border border-gray-300  focus:ring-0 focus:ring-note-blue focus:border-transparent font-mono text-sm"
-                    placeholder="Write your note here... Use #tags to organize your notes."
-                    oninput="updateCharCounter()"
-                ><?php echo e($note['content']); ?></textarea>
-                
-                <!-- Character Counter -->
-                <div class="absolute bottom-3 right-3">
-                    <span 
-                        id="char-counter" 
-                        class="char-counter text-sm px-2 py-1 rounded bg-white border border-gray-200"
-                    >
-                        <?php echo getRemainingChars($note['content']); ?> remaining
-                    </span>
-                </div>
-            </div>
+<!-- Note Container with Gradient Background -->
+<div class="note-container min-h-screen sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Note Card Container -->
+        <div class="note-card-inner rounded-2xl shadow-xl p-8 space-y-4">
             
-            <!-- Note Info -->
-            <div class="mt-2 pt-2">
-                <!-- Desktop Layout -->
-                <div class="hidden md:flex items-center justify-between text-sm text-gray-500">
-                    <div class="flex items-center border-gray-200">
-                        <span>Note ID: 
-                            <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
-                            class="font-mono text-note-blue hover:text-blue-700 hover:underline transition-colors"
-                            title="Click to copy URL">
-                                <?php echo e($note['hash_id']); ?>
-                            </a>
-                        </span>
-                    </div>
-                    
-                    <div class="flex items-center space-x-4">
-                        <span>Created: <?php echo formatTimestamp($note['created_at']); ?></span>
-                        <span>•</span>
-                        <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
-                    </div>
-
-
+            <!-- Note Header -->
+            <div class="flex items-center justify-between">
+                <div class="flex-1 mr-6">
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        value="<?php echo e($note['title']); ?>"
+                        class="title-input text-3xl font-bold text-gray-800 bg-transparent border-none outline-none focus:ring-2 focus:ring-note-blue/20 focus:border-none px-0 py-0 resize-none w-full"
+                        placeholder="Enter note title..."
+                        style="resize: none;"
+                    >
                 </div>
-
-                <!-- Mobile Layout -->
-                <div class="md:hidden space-y-3">
-                    <!-- Note ID -->
-                    <div class="flex items-center justify-center text-sm text-gray-500">
-                        <span>Note ID: 
-                            <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
-                            class="font-mono text-note-blue hover:text-blue-700 hover:underline transition-colors"
-                            title="Click to copy URL">
-                                <?php echo e($note['hash_id']); ?>
-                            </a>
-                        </span>
-                    </div>
-                    
-                    <!-- Timestamps -->
-                    <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
-                        <span>Created: <?php echo formatTimestamp($note['created_at']); ?></span>
-                        <span>•</span>
-                        <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
-                    </div>
-
-
-                </div>
+                
+                <button 
+                    type="button" 
+                    id="save-button"
+                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2"
+                    disabled
+                    onclick="performManualSave()"
+                >
+                    Saved
+                </button>
             </div>
 
+            <!-- Note Form -->
+            <div class="space-y-6">
+                <!-- Content Input -->
+                <div>
+                    <div class="relative">
+                        <textarea 
+                            id="content" 
+                            name="content" 
+                            rows="24"
+                            class="content-textarea w-full px-6 py-4 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-note-blue/20 focus:border-note-blue/30 font-mono text-sm bg-white/50 backdrop-blur-sm"
+                            placeholder="Write your note here... Use #tags to organize your notes."
+                            oninput="updateCharCounter()"
+                        ><?php echo e($note['content']); ?></textarea>
+                        
+                        <!-- Character Counter -->
+                        <div class="absolute bottom-4 right-4">
+                            <span 
+                                id="char-counter" 
+                                class="char-counter text-sm px-3 py-2 rounded-full bg-white/80 border border-gray-200/60 shadow-sm"
+                            >
+                                <?php echo getRemainingChars($note['content']); ?> remaining
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Note Info -->
+                    <div class="mt-6 pt-4 border-t border-gray-200/40">
+                        <!-- Desktop Layout -->
+                        <div class="hidden md:flex items-center justify-between text-sm text-gray-600">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-500">Note ID:</span>
+                                <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
+                                class="font-mono text-note-blue hover:text-blue-600 hover:underline transition-all duration-300 hover:scale-105 px-2 py-1 rounded-lg bg-soft-blue/50 hover:bg-soft-blue/70"
+                                title="Click to copy URL">
+                                    <?php echo e($note['hash_id']); ?>
+                                </a>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 text-gray-500">
+                                <span class="flex items-center space-x-1">
+                                    <span class="w-2 h-2 bg-note-green rounded-full"></span>
+                                    <span>Created: <?php echo formatTimestamp($note['created_at']); ?></span>
+                                </span>
+                                <span>•</span>
+                                <span class="flex items-center space-x-1">
+                                    <span class="w-2 h-2 bg-note-blue rounded-full"></span>
+                                    <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Layout -->
+                        <div class="md:hidden space-y-4">
+                            <!-- Note ID -->
+                            <div class="flex items-center justify-center space-x-2">
+                                <span class="text-gray-500">Note ID:</span>
+                                <a href="note.php?note=<?php echo e($note['hash_id']); ?>" 
+                                class="font-mono text-note-blue hover:text-blue-600 hover:underline transition-all duration-300 hover:scale-105 px-2 py-1 rounded-lg bg-soft-blue/50 hover:bg-soft-blue/70"
+                                title="Click to copy URL">
+                                    <?php echo e($note['hash_id']); ?>
+                                </a>
+                            </div>
+                            
+                            <!-- Timestamps -->
+                            <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
+                                <span class="flex items-center space-x-1">
+                                    <span class="w-2 h-2 bg-note-green rounded-full"></span>
+                                    <span>Created: <?php echo formatTimestamp($note['created_at']); ?></span>
+                                </span>
+                                <span>•</span>
+                                <span class="flex items-center space-x-1">
+                                    <span class="w-2 h-2 bg-note-blue rounded-full"></span>
+                                    <span>Updated: <?php echo formatTimestamp($note['updated_at']); ?></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
     </div>
+</div>
 
 
 <script>
@@ -270,14 +288,14 @@ function updateSaveButtonState() {
     hasUnsavedChanges = (currentContent !== lastSavedContent || currentTitle !== lastSavedTitle);
     
     if (hasUnsavedChanges) {
-        // Enable button and show blue color
+        // Enable button and show active gradient color
         saveButton.disabled = false;
-        saveButton.className = 'bg-note-red hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
+        saveButton.className = 'save-button bg-gradient-to-r from-note-red to-note-orange hover:from-red-600 hover:to-orange-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
         saveButton.textContent = 'Save Note';
     } else {
         // Disable button and show grey color
         saveButton.disabled = true;
-        saveButton.className = 'bg-gray-400 text-gray-600 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-not-allowed text-sm min-w-[100px]';
+        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2';
         saveButton.textContent = 'Saved';
     }
 }
@@ -320,6 +338,7 @@ function performAjaxSave(isAutoSave = false) {
         saveButton.textContent = 'Saving...';
     }
     saveButton.disabled = true;
+    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2';
     
     // Prepare form data
     const formData = new FormData();
@@ -347,7 +366,7 @@ function performAjaxSave(isAutoSave = false) {
             } else {
                 saveButton.textContent = 'Saved!';
             }
-            saveButton.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
+            saveButton.className = 'save-button bg-gradient-to-r from-note-green to-note-blue hover:from-green-600 hover:to-blue-600 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will set button to "Saved" state
@@ -358,7 +377,7 @@ function performAjaxSave(isAutoSave = false) {
         } else {
             // Show error indicator
             saveButton.textContent = 'Save failed';
-            saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
+            saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
             
             setTimeout(() => {
                 updateSaveButtonState(); // This will re-enable button if there are still changes
@@ -369,7 +388,7 @@ function performAjaxSave(isAutoSave = false) {
         console.error('Save error:', error);
         // Show error indicator
         saveButton.textContent = 'Save failed';
-        saveButton.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]';
+        saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
         
         setTimeout(() => {
             updateSaveButtonState(); // This will re-enable button if there are still changes

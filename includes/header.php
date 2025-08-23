@@ -20,9 +20,15 @@
             theme: {
                 extend: {
                     colors: {
-                        'note-red': '#EF4444',
-                        'note-blue': '#3B82F6',
-                        'note-gray': '#6B7280',
+                        'note-red': '#F87171',
+                        'note-blue': '#60A5FA',
+                        'note-gray': '#9CA3AF',
+                        'note-green': '#34D399',
+                        'note-purple': '#A78BFA',
+                        'note-orange': '#FBBF24',
+                        'soft-blue': '#DBEAFE',
+                        'soft-gray': '#F3F4F6',
+                        'soft-white': '#FAFAFA'
                     }
                 }
             }
@@ -32,24 +38,59 @@
     <!-- Custom CSS -->
     <style>
         .note-card {
-            transition: all 0.2s ease-in-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
         .note-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         .content-textarea {
             resize: vertical;
             min-height: 300px;
+            transition: all 0.2s ease-in-out;
+        }
+        .content-textarea:focus {
+            transform: scale(1.002);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
         }
         .char-counter {
-            transition: color 0.2s ease-in-out;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(8px);
         }
         .char-counter.near-limit {
             color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
         }
         .char-counter.at-limit {
             color: #EF4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .title-input {
+            transition: all 0.2s ease-in-out;
+        }
+        .title-input:focus {
+            transform: scale(1.01);
+        }
+        
+        .save-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .save-button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .save-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        
+        .note-container {
+            background: linear-gradient(135deg, #FAFAFA 0%, #F3F4F6 100%);
+        }
+        
+        .note-card-inner {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+            border: 1px solid rgba(229, 231, 235, 0.8);
         }
         
         /* Mobile-specific fixes */
@@ -80,19 +121,19 @@
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-soft-white via-gray-50 to-soft-gray min-h-screen">
     <!-- Navigation Header -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-gray-200/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-10">
                 <div class="flex items-center">
-                    <a href="index.php" class="text-xl font-bold text-gray-900 hover:text-note-blue transition-colors">
+                    <a href="index.php" class="text-xl font-bold text-gray-800 hover:text-note-blue transition-all duration-300 hover:scale-105">
                         📝 Notes App
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="create.php" class="bg-note-blue hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-medium transition-colors text-sm min-w-[100px]">
-                        New Note
+                    <a href="create.php" class="bg-gradient-to-r from-note-blue to-note-purple hover:from-blue-600 hover:to-purple-600 text-white px-4 py-1 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg text-sm mr-2">
+                        ✨ New
                     </a>
                 </div>
             </div>
@@ -100,7 +141,7 @@
     </nav>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <?php if (isset($errorMessage) && !empty(trim($errorMessage))): ?>
             <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div class="flex">
