@@ -151,7 +151,7 @@ include 'includes/header.php';
                 <button 
                     type="button" 
                     id="save-button"
-                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2"
+                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2 hidden md:block"
                     disabled
                     onclick="performManualSave()"
                 >
@@ -295,7 +295,7 @@ function updateSaveButtonState() {
     } else {
         // Disable button and show grey color
         saveButton.disabled = true;
-        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2';
+        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2 hidden md:block';
         saveButton.textContent = 'Saved';
     }
 }
@@ -338,7 +338,7 @@ function performAjaxSave(isAutoSave = false) {
         saveButton.textContent = 'Saving...';
     }
     saveButton.disabled = true;
-    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2';
+    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2 hidden md:block';
     
     // Prepare form data
     const formData = new FormData();
