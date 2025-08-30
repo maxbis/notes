@@ -18,8 +18,8 @@ I've successfully created a comprehensive text replacement system for your Notes
 - **Example**: Type `ddd` → becomes `*** 12 aug` (current date)
 
 #### 2. Checkbox Replacements
-- **Trigger**: `[]` → `☑️` (filled checkbox)
-- **Trigger**: `[ ]` → `☑️` (empty checkbox)  
+- **Trigger**: `[]` → `🔴` (filled checkbox)
+- **Trigger**: `[ ]` → `🔴` (empty checkbox)  
 - **Trigger**: `[x]` → `✅` (checked checkbox)
 - **Trigger**: `[!]` → `⚠️` (warning checkbox)
 - **Trigger**: `[?]` → `❓` (question checkbox)
@@ -154,4 +154,4 @@ If you need to:
 
 ---
 
-**The text replacement system is now fully functional with special xxx toggle functionality!** 🎉
+**The text replacement system is now fully functional with special xxx toggle functionality and updated emoji!** 🎉

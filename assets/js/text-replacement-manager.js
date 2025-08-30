@@ -13,12 +13,12 @@ class TextReplacementManager {
             },
             {
                 trigger: '[]',
-                replacement: '☑️',
+                replacement: '🔴',
                 description: 'Replace with checkbox'
             },
             {
                 trigger: '[ ]',
-                replacement: '☑️',
+                replacement: '🔴',
                 description: 'Replace with checkbox'
             },
             {
@@ -137,7 +137,7 @@ class TextReplacementManager {
         // Handle backspace for emoji replacements
         if (e.key === 'Backspace') {
             const beforeCursor = value.substring(cursorPos - 1, cursorPos);
-            if (beforeCursor === '☑️' || beforeCursor === '☐' || beforeCursor === '⚠️' || 
+            if (beforeCursor === '🔴' || beforeCursor === '☐' || beforeCursor === '⚠️' || 
                 beforeCursor === '😊' || beforeCursor === '😢' || beforeCursor === '😉' || 
                 beforeCursor === '😃' || beforeCursor === '❤️') {
                 // Prevent backspace from deleting just part of the emoji
@@ -306,13 +306,13 @@ class TextReplacementManager {
         let newLine = currentLine;
         let hasChanges = false;
         
-        // Toggle ☑️ to ✅ and ✅ to ☑️
-        if (currentLine.includes('☑️')) {
-            newLine = newLine.replace(/☑️/g, '✅');
+        // Toggle 🔴 to ✅ and ✅ to 🔴
+        if (currentLine.includes('🔴')) {
+            newLine = newLine.replace(/🔴/g, '✅');
             hasChanges = true;
         }
         if (currentLine.includes('✅')) {
-            newLine = newLine.replace(/✅/g, '☑️');
+            newLine = newLine.replace(/✅/g, '🔴');
             hasChanges = true;
         }
         

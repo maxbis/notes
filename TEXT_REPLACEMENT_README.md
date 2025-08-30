@@ -18,8 +18,8 @@ A real-time text replacement system for textareas that automatically converts tr
 - **Description**: Automatically inserts the current date when you type the trigger
 
 ### 2. Checkbox Replacements
-- **Trigger**: `[]` → `☑️` (filled checkbox)
-- **Trigger**: `[ ]` → `☑️` (empty checkbox)
+- **Trigger**: `[]` → `🔴` (filled checkbox)
+- **Trigger**: `[ ]` → `🔴` (empty checkbox)
 - **Trigger**: `[x]` → `✅` (checked checkbox)
 - **Trigger**: `[!]` → `⚠️` (warning checkbox)
 - **Trigger**: `[?]` → `❓` (question checkbox)
@@ -65,7 +65,7 @@ Type: ddd
 Result: *** 12 aug
 
 Type: []
-Result: ☑️
+Result: 🔴
 
 Type: [x]
 Result: ✅
