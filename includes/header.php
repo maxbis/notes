@@ -36,6 +36,7 @@
     </script>
     
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/save-button.css">
     <style>
         .note-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -74,15 +75,7 @@
             transform: scale(1.01);
         }
         
-        .save-button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .save-button:hover:not(:disabled) {
-            transform: scale(1.05);
-        }
-        .save-button:active:not(:disabled) {
-            transform: scale(0.98);
-        }
+
         
         .note-container {
             background: linear-gradient(135deg, #FAFAFA 0%, #F3F4F6 100%);

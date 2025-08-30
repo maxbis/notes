@@ -151,8 +151,7 @@ include 'includes/header.php';
                 <button 
                     type="button" 
                     id="save-button"
-                    class="save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2 hidden md:block"
-                    disabled
+                    class="save-button btn-save btn-save--saved"
                     onclick="performManualSave()"
                 >
                     Saved
@@ -243,6 +242,7 @@ include 'includes/header.php';
 </div>
 
 
+<script src="assets/js/save-button-manager.js"></script>
 <script>
 // Character counter functionality
 function updateCharCounter() {
@@ -288,15 +288,9 @@ function updateSaveButtonState() {
     hasUnsavedChanges = (currentContent !== lastSavedContent || currentTitle !== lastSavedTitle);
     
     if (hasUnsavedChanges) {
-        // Enable button and show active gradient color
-        saveButton.disabled = false;
-        saveButton.className = 'save-button bg-gradient-to-r from-note-red to-note-orange hover:from-red-600 hover:to-orange-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
-        saveButton.textContent = 'Save Note';
+        SaveButtonManager.setState(saveButton, 'unsaved');
     } else {
-        // Disable button and show grey color
-        saveButton.disabled = true;
-        saveButton.className = 'save-button bg-gradient-to-r from-gray-400 to-gray-500 text-gray-600 px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-50 cursor-not-allowed mr-2 hidden md:block';
-        saveButton.textContent = 'Saved';
+        SaveButtonManager.setState(saveButton, 'saved');
     }
 }
 
@@ -329,16 +323,11 @@ function performAjaxSave(isAutoSave = false) {
     isAutoSaving = true;
     
     // Show save indicator
-    let originalText = saveButton.textContent;
-    let originalClass = saveButton.className;
-    
     if (isAutoSave) {
-        saveButton.textContent = 'Auto-saving...';
+        SaveButtonManager.setState(saveButton, 'autoSaving');
     } else {
-        saveButton.textContent = 'Saving...';
+        SaveButtonManager.setState(saveButton, 'saving');
     }
-    saveButton.disabled = true;
-    saveButton.className = 'save-button bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md opacity-75 cursor-not-allowed mr-2 hidden md:block';
     
     // Prepare form data
     const formData = new FormData();
@@ -362,37 +351,22 @@ function performAjaxSave(isAutoSave = false) {
             
             // Show success indicator
             if (isAutoSave) {
-                saveButton.textContent = 'Auto-saved!';
+                SaveButtonManager.showSuccessThenReset(saveButton, 'Auto-saved!', 2000);
             } else {
-                saveButton.textContent = 'Saved!';
+                SaveButtonManager.showSuccessThenReset(saveButton, 'Saved!', 2000);
             }
-            saveButton.className = 'save-button bg-gradient-to-r from-note-green to-note-blue hover:from-green-600 hover:to-blue-600 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
-            
-            setTimeout(() => {
-                updateSaveButtonState(); // This will set button to "Saved" state
-            }, 2000);
             
             // Update timestamps
             updateTimestamps();
         } else {
             // Show error indicator
-            saveButton.textContent = 'Save failed';
-            saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
-            
-            setTimeout(() => {
-                updateSaveButtonState(); // This will re-enable button if there are still changes
-            }, 3000);
+            SaveButtonManager.showErrorThenReset(saveButton, 'Save failed', 3000, hasUnsavedChanges);
         }
     })
     .catch(error => {
         console.error('Save error:', error);
         // Show error indicator
-        saveButton.textContent = 'Save failed';
-        saveButton.className = 'save-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-1 rounded-full font-medium transition-all duration-300 text-sm min-w-[120px] shadow-md hover:shadow-lg mr-2 cursor-pointer';
-        
-        setTimeout(() => {
-            updateSaveButtonState(); // This will re-enable button if there are still changes
-        }, 3000);
+        SaveButtonManager.showErrorThenReset(saveButton, 'Save failed', 3000, hasUnsavedChanges);
     })
     .finally(() => {
         isAutoSaving = false;
