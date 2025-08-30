@@ -245,6 +245,7 @@ include 'includes/header.php';
 <script src="assets/js/save-button-manager.js"></script>
 <script src="assets/js/text-replacement-manager.js"></script>
 <script>
+
 // Character counter functionality
 function updateCharCounter() {
     const content = document.getElementById('content').value;
@@ -274,12 +275,25 @@ const saveButton = document.getElementById('save-button');
 
 // Initialize auto-save
 document.addEventListener('DOMContentLoaded', function() {
-    // Ensure SaveButtonManager is loaded
-    if (typeof SaveButtonManager === 'undefined') {
-        console.error('SaveButtonManager not loaded! Check script loading order.');
-        return;
-    }
-    
+    // Wait a bit to ensure all scripts are loaded
+    setTimeout(() => {
+        // Ensure SaveButtonManager is available before proceeding
+        if (typeof SaveButtonManager === 'undefined') {
+            console.error('SaveButtonManager not available, retrying in 500ms...');
+            setTimeout(() => {
+                if (typeof SaveButtonManager === 'undefined') {
+                    console.error('SaveButtonManager still not available after retry');
+                    return;
+                }
+                initializeAutoSave();
+            }, 500);
+        } else {
+            initializeAutoSave();
+        }
+    }, 100);
+});
+
+function initializeAutoSave() {
     // Setup auto-save
     setupAutoSave();
     
@@ -289,7 +303,10 @@ document.addEventListener('DOMContentLoaded', function() {
         lastSavedTitle = titleInput.value;
         contentTextarea.focus();
     }
-});
+    
+    // Set initial button state
+    updateSaveButtonState();
+}
 
 function updateSaveButtonState() {
     const currentContent = contentTextarea.value;
@@ -335,14 +352,8 @@ function performAjaxSave(isAutoSave = false) {
     
     // Show save indicator
     if (isAutoSave) {
-        // For auto-save, show a nice effect and transition to saved state
-        if (typeof SaveButtonManager !== 'undefined' && SaveButtonManager.showAutoSaveEffect) {
-            SaveButtonManager.showAutoSaveEffect(saveButton);
-        } else {
-            console.warn('SaveButtonManager not available, falling back to basic save state');
-            // Fallback: just show saved state
-            SaveButtonManager.setState(saveButton, 'saved');
-        }
+        // For auto-save, transition directly to saved state
+        SaveButtonManager.showAutoSaveEffect(saveButton);
     } else {
         SaveButtonManager.setState(saveButton, 'saving');
     }

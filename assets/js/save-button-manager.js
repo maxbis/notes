@@ -106,23 +106,8 @@ const SaveButtonManager = {
    * @param {HTMLElement} button - The save button element
    */
   showAutoSaveEffect(button) {
-    // Store original state
-    const originalState = this.getCurrentState(button);
-    
-    // Show a brief "Auto-saved!" effect
-    button.textContent = 'Auto-saved!';
-    button.style.background = 'linear-gradient(to right, #34D399, #60A5FA)';
-    button.style.color = 'white';
-    button.style.transform = 'scale(1.1)';
-    button.style.boxShadow = '0 10px 25px -5px rgba(52, 211, 153, 0.4)';
-    
-    // After a brief moment, transition to saved state
-    setTimeout(() => {
-      this.setState(button, 'saved');
-      // Reset any inline styles
-      button.style.transform = '';
-      button.style.boxShadow = '';
-    }, 800);
+    // Simply transition to saved state for auto-save
+    this.setState(button, 'saved');
   },
 
   /**
