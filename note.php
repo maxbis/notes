@@ -243,6 +243,7 @@ include 'includes/header.php';
 
 
 <script src="assets/js/save-button-manager.js"></script>
+<script src="assets/js/text-replacement-manager.js"></script>
 <script>
 // Character counter functionality
 function updateCharCounter() {

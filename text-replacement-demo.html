@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Replacement Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        
+        .demo-section h2 {
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        .replacement-list {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .replacement-list h3 {
+            margin-top: 0;
+            color: #2d5a2d;
+        }
+        
+        .replacement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin: 10px 0;
+            border: 1px solid #d4edda;
+        }
+        
+        .trigger {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .arrow {
+            color: #6c757d;
+            font-size: 18px;
+        }
+        
+        .result {
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .add-replacement {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .add-replacement input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin: 0 10px;
+            font-family: monospace;
+        }
+        
+        .add-replacement button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .add-replacement button:hover {
+            background: #0056b3;
+        }
+        
+        .console {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .console h3 {
+            margin-top: 0;
+            color: #a0aec0;
+        }
+        
+        .console-log {
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #4a5568;
+        }
+        
+        .timestamp {
+            color: #718096;
+            font-size: 10px;
+        }
+        
+        .message {
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>Text Replacement Demo</h1>
+        
+        <div class="demo-section">
+            <h2>Try the Text Replacements</h2>
+            <p>Type in the textarea below to test the text replacement functionality:</p>
+            
+            <textarea id="demo-textarea" placeholder="Start typing here... 
+
+Examples:
+- Type 'ddd' for current date
+- Type '[]' for checkbox
+- Type '[ ]' for empty checkbox  
+- Type '[x]' for checked checkbox
+- Type '[!]' for warning
+- Type '[?]' for question
+- Type '[!!]' for double exclamation
+- Type '[->]' for arrow
+- Type 'xxx' on a line with checkboxes to toggle them
+
+Try typing 'xxx' on a line that contains checkboxes to see the toggle functionality!"></textarea>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to Use</h3>
+            <ul>
+                <li><strong>Date Replacement:</strong> Type <code>ddd</code> and it will be replaced with the current date</li>
+                <li><strong>Checkbox Replacements:</strong> Type <code>[]</code>, <code>[ ]</code>, <code>[x]</code>, <code>[!]</code>, or <code>[?]</code> for various checkboxes</li>
+                <li><strong>Special Symbols:</strong> Type <code>[!!]</code> for ‼️, <code>[->]</code> for 👉</li>
+                <li><strong>Line Toggle:</strong> Type <code>xxx</code> to toggle all checkboxes on the current line</li>
+                <li>Replacements happen in real-time as you type</li>
+                <li>The cursor will be positioned at the end of the replacement</li>
+                <li>All replacements trigger save events for auto-save integration</li>
+            </ul>
+        </div>
+        
+        <div class="replacement-list">
+            <h3>Current Replacement Rules</h3>
+            <div id="replacement-rules">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="add-replacement">
+            <h3>Add Custom Replacement</h3>
+            <p>Add your own text replacement rules:</p>
+            <input type="text" id="new-trigger" placeholder="Trigger text" />
+            <span class="arrow">→</span>
+            <input type="text" id="new-replacement" placeholder="Replacement text" />
+            <button onclick="addCustomReplacement()">Add Rule</button>
+        </div>
+        
+        <div class="console">
+            <h3>Console Log</h3>
+            <div id="console-output">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/text-replacement-manager.js"></script>
+    <script>
+        // Demo-specific functionality
+        function logToConsole(message, type = 'info') {
+            const consoleOutput = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'console-log';
+            logEntry.innerHTML = `
+                <span class="timestamp">[${timestamp}]</span>
+                <span class="message">${message}</span>
+            `;
+            
+            consoleOutput.appendChild(logEntry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        function updateReplacementRules() {
+            const container = document.getElementById('replacement-rules');
+            const rules = textReplacementManager.getReplacements();
+            
+            container.innerHTML = rules.map(rule => `
+                <div class="replacement-item">
+                    <span class="trigger">${rule.trigger}</span>
+                    <span class="arrow">→</span>
+                    <span class="result">${typeof rule.replacement === 'function' ? rule.replacement() : rule.replacement}</span>
+                </div>
+            `).join('');
+        }
+        
+        function addCustomReplacement() {
+            const trigger = document.getElementById('new-trigger').value.trim();
+            const replacement = document.getElementById('new-replacement').value.trim();
+            
+            if (!trigger || !replacement) {
+                alert('Please enter both trigger and replacement text');
+                return;
+            }
+            
+            textReplacementManager.addReplacement(trigger, replacement, 'Custom replacement');
+            updateReplacementRules();
+            
+            // Clear inputs
+            document.getElementById('new-trigger').value = '';
+            document.getElementById('new-replacement').value = '';
+            
+            logToConsole(`Added custom replacement: "${trigger}" → "${replacement}"`);
+        }
+        
+        // Listen for text replacement events
+        document.addEventListener('textReplacement', (e) => {
+            logToConsole(`Text replacement triggered: ${e.detail.timestamp}`);
+        });
+        
+        // Initialize demo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateReplacementRules();
+            logToConsole('Text replacement demo initialized');
+            
+            // Focus the textarea
+            document.getElementById('demo-textarea').focus();
+        });
+        
+        // Override console.log to also show in our console
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logToConsole(args.join(' '));
+        };
+    </script>
+</body>
+</html>
