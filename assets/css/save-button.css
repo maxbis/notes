@@ -2,7 +2,9 @@
 
 /* Base save button */
 .save-button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .save-button:hover:not(:disabled) {
@@ -21,7 +23,7 @@
   display: none;
   border-radius: 9999px;
   font-weight: 500;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.875rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -57,13 +59,6 @@
   cursor: not-allowed;
 }
 
-.btn-save--auto-saving {
-  background: linear-gradient(to right, #6B7280, #4B5563);
-  color: white;
-  opacity: 0.75;
-  cursor: not-allowed;
-}
-
 .btn-save--success {
   background: linear-gradient(to right, #34D399, #60A5FA);
   color: white;
@@ -71,17 +66,6 @@
 }
 
 .btn-save--success:hover {
-  background: linear-gradient(to right, #059669, #2563EB);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-save--auto-saved {
-  background: linear-gradient(to right, #34D399, #60A5FA);
-  color: white;
-  cursor: pointer;
-}
-
-.btn-save--auto-saved:hover {
   background: linear-gradient(to right, #059669, #2563EB);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }

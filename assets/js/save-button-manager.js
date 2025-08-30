@@ -20,19 +20,9 @@ const SaveButtonManager = {
       text: 'Saving...',
       disabled: true
     },
-    autoSaving: {
-      classes: 'save-button btn-save btn-save--auto-saving',
-      text: 'Auto-saving...',
-      disabled: true
-    },
     success: {
       classes: 'save-button btn-save btn-save--success',
       text: 'Saved!',
-      disabled: false
-    },
-    autoSaved: {
-      classes: 'save-button btn-save btn-save--auto-saved',
-      text: 'Auto-saved!',
       disabled: false
     },
     error: {
@@ -112,6 +102,30 @@ const SaveButtonManager = {
   },
 
   /**
+   * Show auto-save effect and transition directly to saved state
+   * @param {HTMLElement} button - The save button element
+   */
+  showAutoSaveEffect(button) {
+    // Store original state
+    const originalState = this.getCurrentState(button);
+    
+    // Show a brief "Auto-saved!" effect
+    button.textContent = 'Auto-saved!';
+    button.style.background = 'linear-gradient(to right, #34D399, #60A5FA)';
+    button.style.color = 'white';
+    button.style.transform = 'scale(1.1)';
+    button.style.boxShadow = '0 10px 25px -5px rgba(52, 211, 153, 0.4)';
+    
+    // After a brief moment, transition to saved state
+    setTimeout(() => {
+      this.setState(button, 'saved');
+      // Reset any inline styles
+      button.style.transform = '';
+      button.style.boxShadow = '';
+    }, 800);
+  },
+
+  /**
    * Show error state briefly then reset to unsaved if there are changes
    * @param {HTMLElement} button - The save button element
    * @param {string} errorText - Text to show in error state
@@ -139,4 +153,9 @@ const SaveButtonManager = {
 // Export for use in other modules (if using modules)
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = SaveButtonManager;
+}
+
+// Export for use in browser
+if (typeof window !== 'undefined') {
+  window.SaveButtonManager = SaveButtonManager;
 }

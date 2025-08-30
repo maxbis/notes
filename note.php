@@ -272,8 +272,18 @@ const contentTextarea = document.getElementById('content');
 const titleInput = document.getElementById('title');
 const saveButton = document.getElementById('save-button');
 
-// Initialize last saved content
+// Initialize auto-save
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure SaveButtonManager is loaded
+    if (typeof SaveButtonManager === 'undefined') {
+        console.error('SaveButtonManager not loaded! Check script loading order.');
+        return;
+    }
+    
+    // Setup auto-save
+    setupAutoSave();
+    
+    // Initialize last saved content
     if (contentTextarea) {
         lastSavedContent = contentTextarea.value;
         lastSavedTitle = titleInput.value;
@@ -325,7 +335,14 @@ function performAjaxSave(isAutoSave = false) {
     
     // Show save indicator
     if (isAutoSave) {
-        SaveButtonManager.setState(saveButton, 'autoSaving');
+        // For auto-save, show a nice effect and transition to saved state
+        if (typeof SaveButtonManager !== 'undefined' && SaveButtonManager.showAutoSaveEffect) {
+            SaveButtonManager.showAutoSaveEffect(saveButton);
+        } else {
+            console.warn('SaveButtonManager not available, falling back to basic save state');
+            // Fallback: just show saved state
+            SaveButtonManager.setState(saveButton, 'saved');
+        }
     } else {
         SaveButtonManager.setState(saveButton, 'saving');
     }
@@ -352,7 +369,8 @@ function performAjaxSave(isAutoSave = false) {
             
             // Show success indicator
             if (isAutoSave) {
-                SaveButtonManager.showSuccessThenReset(saveButton, 'Auto-saved!', 2000);
+                // Auto-save effect is already shown, no need for additional success message
+                // The button will transition to saved state automatically
             } else {
                 SaveButtonManager.showSuccessThenReset(saveButton, 'Saved!', 2000);
             }
@@ -389,8 +407,7 @@ function updateTimestamps() {
     });
 }
 
-// Initialize auto-save
-setupAutoSave();
+// Auto-save is now initialized in DOMContentLoaded event
 
 // Manual save function (calls unified AJAX save)
 function performManualSave() {
