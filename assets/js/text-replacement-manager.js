@@ -8,7 +8,7 @@ class TextReplacementManager {
         this.replacements = [
             {
                 trigger: 'ddd',
-                replacement: () => this.getCurrentDate(),
+                replacement: () => '*** ' + this.getCurrentDate(),
                 description: 'Replace with current date'
             },
             {
@@ -49,7 +49,7 @@ class TextReplacementManager {
             {
                 trigger: 'xxx',
                 replacement: (textarea) => this.toggleCheckboxesOnLine(textarea),
-                description: 'Toggle all checkboxes on current line'
+                description: 'Toggle all checkboxes on current line and replace xxx with current date'
             },
         ];
         
@@ -57,13 +57,13 @@ class TextReplacementManager {
     }
     
     /**
-     * Get current date in dd mm format
+     * Get current date in dd/mm format
      */
     getCurrentDate() {
         const now = new Date();
         const day = now.getDate().toString().padStart(2, '0');
-        const month = now.toLocaleDateString('en-US', { month: 'short' }).toLowerCase();
-        return `*** ${day} ${month}`;
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        return `${day}/${month}`;
     }
     
     /**
@@ -93,13 +93,33 @@ class TextReplacementManager {
         
         textarea.setAttribute('data-replacement-initialized', 'true');
         
-        textarea.addEventListener('input', (e) => {
-            this.handleInput(e);
-        });
-        
-        textarea.addEventListener('keydown', (e) => {
-            this.handleKeydown(e);
-        });
+        // Only add event listeners if the auto-save system is ready
+        // This prevents interference with initial state
+        if (typeof window.lastSavedContent !== 'undefined') {
+            textarea.addEventListener('input', (e) => {
+                this.handleInput(e);
+            });
+            
+            textarea.addEventListener('keydown', (e) => {
+                this.handleKeydown(e);
+            });
+        } else {
+            // Wait for auto-save system to be ready
+            const checkReady = () => {
+                if (typeof window.lastSavedContent !== 'undefined') {
+                    textarea.addEventListener('input', (e) => {
+                        this.handleInput(e);
+                    });
+                    
+                    textarea.addEventListener('keydown', (e) => {
+                        this.handleKeydown(e);
+                    });
+                } else {
+                    setTimeout(checkReady, 100);
+                }
+            };
+            checkReady();
+        }
     }
     
     /**
@@ -162,19 +182,19 @@ class TextReplacementManager {
         let replacementText;
         if (typeof replacement.replacement === 'function') {
             if (replacement.trigger === 'xxx') {
-                // Special handling for xxx - toggle checkboxes on line and remove xxx
+                // Special handling for xxx - toggle checkboxes on line and replace xxx with date
                 const finalValue = replacement.replacement(textarea);
                 textarea.value = finalValue;
                 
-                // Calculate new cursor position (after removing xxx)
-                const newCursorPos = cursorPos - triggerLength;
+                // Get the adjusted cursor position from toggleCheckboxesOnLine
+                const newCursorPos = this.getAdjustedCursorPosition(textarea, cursorPos, triggerLength);
                 textarea.setSelectionRange(newCursorPos, newCursorPos);
                 
                 // Trigger save event
                 this.triggerSaveEvent(textarea);
                 
                 // Log replacement
-                console.log(`Text replacement: "${replacement.trigger}" → line toggled`);
+                console.log(`Text replacement: "${replacement.trigger}" → line toggled and xxx replaced with date`);
                 return;
             } else {
                 replacementText = replacement.replacement(textarea);
@@ -328,26 +348,57 @@ class TextReplacementManager {
             adjustedCursorPos = cursorPos + lengthDiff;
         }
         
-        // Remove the xxx trigger text using the adjusted cursor position
+        // Replace the xxx trigger text with current date
         const triggerLength = 3; // length of 'xxx'
+        const currentDate = this.getCurrentDate();
         const beforeTrigger = finalValue.substring(0, adjustedCursorPos - triggerLength);
         const afterTrigger = finalValue.substring(adjustedCursorPos);
-        finalValue = beforeTrigger + afterTrigger;
+        finalValue = beforeTrigger + currentDate + afterTrigger;
+        
+        // Always position cursor at the end of the line after date replacement
+        const newLineEnd = finalValue.indexOf('\n', adjustedCursorPos - triggerLength);
+        const endOfLinePos = newLineEnd === -1 ? finalValue.length : newLineEnd;
         
         return finalValue; // Return the final value for performReplacement to use
+    }
+    
+    /**
+     * Get adjusted cursor position after xxx replacement
+     */
+    getAdjustedCursorPosition(textarea, originalCursorPos, triggerLength) {
+        const value = textarea.value;
+        const beforeCursor = value.substring(0, originalCursorPos);
+        
+        // Find the current line start
+        const lastNewlineBefore = beforeCursor.lastIndexOf('\n');
+        const lineStart = lastNewlineBefore === -1 ? 0 : lastNewlineBefore + 1;
+        
+        // Find the end of the current line
+        const afterCursor = value.substring(originalCursorPos);
+        const nextNewlineAfter = afterCursor.indexOf('\n');
+        const lineEnd = nextNewlineAfter === -1 ? value.length : originalCursorPos + nextNewlineAfter;
+        
+        // Always return the end of the line position
+        return lineEnd;
     }
 }
 
 // Create global instance
 const textReplacementManager = new TextReplacementManager();
 
-// Auto-initialize when DOM is ready
+// Auto-initialize when DOM is ready, but wait a bit longer to ensure other systems are initialized
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        textReplacementManager.init();
+        // Wait a bit longer to ensure auto-save system is initialized
+        setTimeout(() => {
+            textReplacementManager.init();
+        }, 200);
     });
 } else {
-    textReplacementManager.init();
+    // DOM is already ready, wait a bit longer
+    setTimeout(() => {
+        textReplacementManager.init();
+    }, 200);
 }
 
 // Export for use in other scripts

@@ -294,17 +294,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeAutoSave() {
-    // Setup auto-save
-    setupAutoSave();
-    
-    // Initialize last saved content
+    // Initialize last saved content first (before setting up event listeners)
     if (contentTextarea) {
         lastSavedContent = contentTextarea.value;
         lastSavedTitle = titleInput.value;
         contentTextarea.focus();
     }
     
-    // Set initial button state
+    // Setup auto-save (this adds event listeners)
+    setupAutoSave();
+    
+    // Set initial button state after everything is initialized
     updateSaveButtonState();
 }
 
@@ -378,6 +378,9 @@ function performAjaxSave(isAutoSave = false) {
             lastSavedContent = currentContent;
             lastSavedTitle = currentTitle;
             
+            // Update the save button state to reflect that changes are now saved
+            updateSaveButtonState();
+            
             // Show success indicator
             if (isAutoSave) {
                 // Auto-save effect is already shown, no need for additional success message
@@ -425,32 +428,46 @@ function performManualSave() {
     performAjaxSave(false);
 }
 
+// Debug function to check current save state
+function debugSaveState() {
+    const currentContent = contentTextarea.value;
+    const currentTitle = titleInput.value;
+    const actuallyHasUnsavedChanges = (currentContent !== lastSavedContent || currentTitle !== lastSavedTitle);
+    
+    console.log('Current save state:', {
+        currentContent: currentContent.substring(0, 100) + '...',
+        lastSavedContent: lastSavedContent.substring(0, 100) + '...',
+        currentTitle,
+        lastSavedTitle,
+        hasUnsavedChanges,
+        actuallyHasUnsavedChanges,
+        contentLength: currentContent.length,
+        lastSavedContentLength: lastSavedContent.length
+    });
+}
+
+// Make debug function available globally for console access
+window.debugSaveState = debugSaveState;
+
 // Save on page unload if there are unsaved changes
 window.addEventListener('beforeunload', function(e) {
-
-    if (hasUnsavedChanges) {
-        // Perform a synchronous save attempt
-        const currentContent = contentTextarea.value;
-        const currentTitle = titleInput.value;
-        
-        // Create a synchronous XMLHttpRequest to save before leaving
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', window.location.href, false); // Synchronous request
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        
-        const formData = new URLSearchParams();
-        formData.append('csrf_token', '<?php echo generateCSRFToken(); ?>');
-        formData.append('title', currentTitle);
-        formData.append('content', currentContent);
-        formData.append('auto_save', '1');
-        
-        try {
-            xhr.send(formData.toString());
-            // Note: We can't guarantee the save completed due to page navigation
-        } catch (error) {
-            // If save fails, we can't prevent navigation anyway
-        }
-        
+    // Check if there are actual unsaved changes by comparing current values with last saved values
+    const currentContent = contentTextarea.value;
+    const currentTitle = titleInput.value;
+    const actuallyHasUnsavedChanges = (currentContent !== lastSavedContent || currentTitle !== lastSavedTitle);
+    
+    // Debug logging (only in development)
+    if (typeof console !== 'undefined' && console.log) {
+        console.log('beforeunload check:', {
+            currentContent: currentContent.substring(0, 50) + '...',
+            lastSavedContent: lastSavedContent.substring(0, 50) + '...',
+            currentTitle,
+            lastSavedTitle,
+            actuallyHasUnsavedChanges
+        });
+    }
+    
+    if (actuallyHasUnsavedChanges) {
         // Show confirmation dialog to user
         e.preventDefault();
         e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
