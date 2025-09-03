@@ -93,33 +93,13 @@ class TextReplacementManager {
         
         textarea.setAttribute('data-replacement-initialized', 'true');
         
-        // Only add event listeners if the auto-save system is ready
-        // This prevents interference with initial state
-        if (typeof window.lastSavedContent !== 'undefined') {
-            textarea.addEventListener('input', (e) => {
-                this.handleInput(e);
-            });
-            
-            textarea.addEventListener('keydown', (e) => {
-                this.handleKeydown(e);
-            });
-        } else {
-            // Wait for auto-save system to be ready
-            const checkReady = () => {
-                if (typeof window.lastSavedContent !== 'undefined') {
-                    textarea.addEventListener('input', (e) => {
-                        this.handleInput(e);
-                    });
-                    
-                    textarea.addEventListener('keydown', (e) => {
-                        this.handleKeydown(e);
-                    });
-                } else {
-                    setTimeout(checkReady, 100);
-                }
-            };
-            checkReady();
-        }
+        textarea.addEventListener('input', (e) => {
+            this.handleInput(e);
+        });
+        
+        textarea.addEventListener('keydown', (e) => {
+            this.handleKeydown(e);
+        });
     }
     
     /**
@@ -386,19 +366,13 @@ class TextReplacementManager {
 // Create global instance
 const textReplacementManager = new TextReplacementManager();
 
-// Auto-initialize when DOM is ready, but wait a bit longer to ensure other systems are initialized
+// Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        // Wait a bit longer to ensure auto-save system is initialized
-        setTimeout(() => {
-            textReplacementManager.init();
-        }, 200);
+        textReplacementManager.init();
     });
 } else {
-    // DOM is already ready, wait a bit longer
-    setTimeout(() => {
-        textReplacementManager.init();
-    }, 200);
+    textReplacementManager.init();
 }
 
 // Export for use in other scripts

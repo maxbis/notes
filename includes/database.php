@@ -107,10 +107,53 @@ class Database {
         return $hashId;
     }
     
-    // Update existing note
-    public function updateNote($hashId, $title, $content) {
+    // Update existing note with optimistic locking
+    public function updateNote($hashId, $title, $content, $expectedUpdatedAt = null) {
+        if ($expectedUpdatedAt !== null) {
+            // Check if the note has been modified since it was loaded
+            $stmt = $this->pdo->prepare("SELECT updated_at FROM notes WHERE hash_id = ?");
+            $stmt->execute([$hashId]);
+            $currentNote = $stmt->fetch();
+            
+            if (!$currentNote) {
+                return ['success' => false, 'error' => 'Note not found'];
+            }
+            
+            // Compare timestamps (convert to same format for comparison)
+            $expected = new DateTime($expectedUpdatedAt);
+            $current = new DateTime($currentNote['updated_at']);
+            
+            // If the expected timestamp is very recent (within 5 seconds), allow force overwrite
+            $timeDiff = abs($expected->getTimestamp() - $current->getTimestamp());
+            $allowForceOverwrite = $timeDiff <= 5; // Allow force overwrite if within 5 seconds
+            
+            if ($expected->format('Y-m-d H:i:s') !== $current->format('Y-m-d H:i:s') && !$allowForceOverwrite) {
+                return [
+                    'success' => false, 
+                    'error' => 'conflict',
+                    'current_updated_at' => $currentNote['updated_at'],
+                    'expected_updated_at' => $expectedUpdatedAt
+                ];
+            }
+        }
+        
+        // Proceed with update if no conflict
         $stmt = $this->pdo->prepare("UPDATE notes SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE hash_id = ?");
-        return $stmt->execute([$title, $content, $hashId]);
+        $result = $stmt->execute([$title, $content, $hashId]);
+        
+        if ($result) {
+            // Get the new updated_at timestamp
+            $stmt = $this->pdo->prepare("SELECT updated_at FROM notes WHERE hash_id = ?");
+            $stmt->execute([$hashId]);
+            $newNote = $stmt->fetch();
+            
+            return [
+                'success' => true,
+                'updated_at' => $newNote['updated_at']
+            ];
+        }
+        
+        return ['success' => false, 'error' => 'Update failed'];
     }
     
     // Delete note

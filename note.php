@@ -27,6 +27,7 @@ try {
             $title = trim($_POST['title'] ?? '');
             $content = trim($_POST['content'] ?? '');
             $isAutoSave = isset($_POST['auto_save']) && $_POST['auto_save'] === '1';
+            $expectedUpdatedAt = $_POST['expected_updated_at'] ?? null;
             
             // Validate content
             if (empty($content)) {
@@ -42,8 +43,10 @@ try {
                 
                 // Check if note exists
                 if ($db->noteExists($hashId)) {
-                    // Update existing note
-                    if ($db->updateNote($hashId, $title, $content)) {
+                    // Update existing note with optimistic locking
+                    $updateResult = $db->updateNote($hashId, $title, $content, $expectedUpdatedAt);
+                    
+                    if ($updateResult['success']) {
                         // Success - note was saved
                         
                         // Return JSON for all AJAX requests (both auto-save and manual save)
@@ -51,7 +54,18 @@ try {
                         echo json_encode([
                             'success' => true,
                             'message' => $isAutoSave ? 'Note auto-saved successfully' : 'Note saved successfully',
-                            'timestamp' => date('Y-m-d H:i:s')
+                            'timestamp' => $updateResult['updated_at']
+                        ]);
+                        exit;
+                    } elseif ($updateResult['error'] === 'conflict') {
+                        // Conflict detected - another process has updated the note
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'success' => false,
+                            'error' => 'conflict',
+                            'message' => 'Note has been updated by another process',
+                            'current_updated_at' => $updateResult['current_updated_at'],
+                            'expected_updated_at' => $updateResult['expected_updated_at']
                         ]);
                         exit;
                     } else {
@@ -146,6 +160,9 @@ include 'includes/header.php';
                         placeholder="Enter note title..."
                         style="resize: none;"
                     >
+                    
+                    <!-- Hidden input to store the original updated_at timestamp for optimistic locking -->
+                    <input type="hidden" id="original-updated-at" value="<?php echo e($note['updated_at']); ?>">
                 </div>
                 
                 <button 
@@ -241,6 +258,60 @@ include 'includes/header.php';
     </div>
 </div>
 
+<!-- Conflict Resolution Modal -->
+<div id="conflict-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex items-center mb-4">
+                <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-gray-900">Note Conflict Detected</h3>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 mb-3">
+                    This note has been updated by another process since you last loaded it.
+                </p>
+                <div class="bg-gray-50 p-3 rounded-md text-sm">
+                    <p><strong>Your version was based on:</strong> <span id="expected-time"></span></p>
+                    <p><strong>Current version updated at:</strong> <span id="current-time"></span></p>
+                </div>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button 
+                    type="button" 
+                    id="reload-note-btn"
+                    class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                    Reload Note
+                </button>
+                <button 
+                    type="button" 
+                    id="overwrite-note-btn"
+                    class="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                >
+                    Overwrite Changes
+                </button>
+            </div>
+            
+            <div class="mt-3 text-center">
+                <button 
+                    type="button" 
+                    id="cancel-conflict-btn"
+                    class="text-gray-500 hover:text-gray-700 text-sm"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="assets/js/save-button-manager.js"></script>
 <script src="assets/js/text-replacement-manager.js"></script>
@@ -267,6 +338,7 @@ function updateCharCounter() {
 let autoSaveTimer;
 let lastSavedContent = '';
 let lastSavedTitle = '';
+let lastSavedUpdatedAt = document.getElementById('original-updated-at').value; // Store the original updated_at timestamp
 let isAutoSaving = false;
 let hasUnsavedChanges = false;
 const contentTextarea = document.getElementById('content');
@@ -364,6 +436,7 @@ function performAjaxSave(isAutoSave = false) {
     formData.append('title', currentTitle);
     formData.append('content', currentContent);
     formData.append('auto_save', isAutoSave ? '1' : '0');
+    formData.append('expected_updated_at', lastSavedUpdatedAt); // Include the expected timestamp for optimistic locking
     
     // Perform AJAX save
     fetch('note.php?note=<?php echo e($hashId); ?>', {
@@ -377,6 +450,7 @@ function performAjaxSave(isAutoSave = false) {
             // Update last saved content
             lastSavedContent = currentContent;
             lastSavedTitle = currentTitle;
+            lastSavedUpdatedAt = data.timestamp; // Update the timestamp
             
             // Update the save button state to reflect that changes are now saved
             updateSaveButtonState();
@@ -391,6 +465,9 @@ function performAjaxSave(isAutoSave = false) {
             
             // Update timestamps
             updateTimestamps();
+        } else if (data.error === 'conflict') {
+            // Handle conflict - show conflict resolution modal
+            showConflictModal(data.current_updated_at, data.expected_updated_at, currentContent, currentTitle);
         } else {
             // Show error indicator
             SaveButtonManager.showErrorThenReset(saveButton, 'Save failed', 3000, hasUnsavedChanges);
@@ -448,6 +525,85 @@ function debugSaveState() {
 
 // Make debug function available globally for console access
 window.debugSaveState = debugSaveState;
+
+// Conflict resolution functions
+function showConflictModal(currentUpdatedAt, expectedUpdatedAt, pendingContent, pendingTitle) {
+    // Populate modal with conflict information
+    document.getElementById('expected-time').textContent = formatTimestamp(expectedUpdatedAt);
+    document.getElementById('current-time').textContent = formatTimestamp(currentUpdatedAt);
+    
+    // Store pending changes for later use
+    window.pendingChanges = { content: pendingContent, title: pendingTitle };
+    
+    // Show modal
+    document.getElementById('conflict-modal').classList.remove('hidden');
+    
+    // Reset save button to unsaved state
+    SaveButtonManager.setState(saveButton, 'unsaved');
+}
+
+function resolveConflict(action) {
+    const modal = document.getElementById('conflict-modal');
+    modal.classList.add('hidden');
+    
+    if (action === 'reload') {
+        // Reload the note from server
+        window.location.reload();
+    } else if (action === 'overwrite') {
+        // Force save by updating the expected timestamp to current
+        lastSavedUpdatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        
+        // Retry the save with force overwrite
+        const currentContent = contentTextarea.value;
+        const currentTitle = titleInput.value;
+        
+        const formData = new FormData();
+        formData.append('csrf_token', '<?php echo generateCSRFToken(); ?>');
+        formData.append('title', currentTitle);
+        formData.append('content', currentContent);
+        formData.append('auto_save', '0');
+        formData.append('expected_updated_at', lastSavedUpdatedAt);
+        
+        // Perform force save
+        fetch('note.php?note=<?php echo e($hashId); ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update saved state
+                lastSavedContent = currentContent;
+                lastSavedTitle = currentTitle;
+                lastSavedUpdatedAt = data.timestamp;
+                updateSaveButtonState();
+                SaveButtonManager.showSuccessThenReset(saveButton, 'Saved!', 2000);
+                updateTimestamps();
+            } else {
+                SaveButtonManager.showErrorThenReset(saveButton, 'Save failed', 3000, true);
+            }
+        })
+        .catch(error => {
+            console.error('Force save error:', error);
+            SaveButtonManager.showErrorThenReset(saveButton, 'Save failed', 3000, true);
+        });
+    }
+}
+
+// Helper function to format timestamps
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+}
+
+// Setup conflict modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('reload-note-btn').addEventListener('click', () => resolveConflict('reload'));
+    document.getElementById('overwrite-note-btn').addEventListener('click', () => resolveConflict('overwrite'));
+    document.getElementById('cancel-conflict-btn').addEventListener('click', () => {
+        document.getElementById('conflict-modal').classList.add('hidden');
+    });
+});
 
 // Save on page unload if there are unsaved changes
 window.addEventListener('beforeunload', function(e) {
