@@ -33,12 +33,12 @@
 }
 
 /* Save Button Component Classes */
-.btn-save {
+.btn-save,
+.btn-new {
   padding: 0.25rem 1.5rem;
   min-width: 60px;
   margin-right: 0.5rem;
-  display: none;
-  border-radius: 9999px;
+  border-radius: 4px;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.875rem;
@@ -46,10 +46,27 @@
   position: relative;
 }
 
+.btn-save {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .btn-save {
     display: block;
   }
+}
+
+.btn-new {
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(to right, #60A5FA, #A78BFA);
+  color: white;
+  cursor: pointer;
+}
+
+.btn-new:hover {
+  background: linear-gradient(to right, #2563EB, #7C3AED);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-save--saved {

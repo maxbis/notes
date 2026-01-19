@@ -125,7 +125,7 @@
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="create.php" class="bg-gradient-to-r from-note-blue to-note-purple hover:from-blue-600 hover:to-purple-600 text-white px-4 py-1 rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg text-sm mr-2">
+                    <a href="create.php" class="save-button btn-new">
                         ✨ New
                     </a>
                 </div>
